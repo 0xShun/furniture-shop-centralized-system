@@ -1,3 +1,4 @@
+"""Models for inventory management, including InventoryItem."""
 from django.db import models
 
 # Create your models here.
@@ -8,6 +9,7 @@ class InventoryItem(models.Model):
     quantity = models.PositiveIntegerField(default=0)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     low_stock_threshold = models.PositiveIntegerField(default=5)
+    image = models.ImageField(upload_to='inventory_images/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

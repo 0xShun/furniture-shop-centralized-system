@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Inventory List</h2>
+<a href="{% url 'inventory_add' %}" class="btn btn-primary mb-2">Add New Item</a>
+<a href="{% url 'inventory_export_csv' %}?q={{ search_query }}&low_stock={{ low_stock }}" class="btn btn-success mb-2">Export to CSV</a>
+<form method="get" style="margin: 1em 0;">
+    <input type="text" name="q" placeholder="Search by name" value="{{ search_query }}" />
+    <label>
+        <input type="checkbox" name="low_stock" value="1" {% if low_stock == '1' %}checked{% endif %} />
+        Show only low stock
+    </label>
+    <button type="submit">Search</button>
+</form>
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Low Stock Threshold</th>
+        <th>Image</th>
+        <th>Actions</th>
+    </tr>
+    {% for item in items %}
+    <tr{% if item.quantity <= item.low_stock_threshold %} style="background-color: #ffe5e5;"{% endif %}>
+        <td>{{ item.name }}</td>
+        <td>{{ item.description }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.price }}</td>
+        <td>{{ item.low_stock_threshold }}</td>
+        <td>
+            {% if item.image %}
+                <img src="{{ item.image.url }}" alt="Image" style="max-width:60px; max-height:60px;" />
+            {% else %}
+                No image
+            {% endif %}
+        </td>
+        <td>
+            <a href="{% url 'inventory_edit' item.pk %}">Edit</a> |
+            <a href="{% url 'inventory_delete' item.pk %}">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+<div class="pagination">
+    {% if page_obj.has_previous %}
+        <a href="?q={{ search_query }}&low_stock={{ low_stock }}&page={{ page_obj.previous_page_number }}">Previous</a>
+    {% endif %}
+    <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+        <a href="?q={{ search_query }}&low_stock={{ low_stock }}&page={{ page_obj.next_page_number }}">Next</a>
+    {% endif %}
+</div>
+{% endblock %} 
